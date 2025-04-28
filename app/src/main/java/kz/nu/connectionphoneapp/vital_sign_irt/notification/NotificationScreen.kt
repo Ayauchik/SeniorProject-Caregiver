@@ -22,33 +22,17 @@ import kz.nu.connectionphoneapp.vital_sign_irt.presentation.AlarmScreen
 
 
 @Composable
-fun NotificationScreen(viewModel: NotificationViewModel = viewModel()) {
-    val userId by viewModel.userId.collectAsState()
+fun NotificationScreen(
+    viewModel: NotificationViewModel = viewModel(),
+    ) {
+
     val token by viewModel.token.collectAsState()
     val message by viewModel.message.collectAsState()
-    val isSending by viewModel.isSending.collectAsState()
     val status by viewModel.status.collectAsState()
 
     val clipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-
-//    val isAlarmPlaying by viewModel.isAlarming.observeAsState(false)
-//
-//    val context = LocalContext.current
-//    var mediaPlayer by remember { mutableStateOf<MediaPlayer?>(null) }
-//
-//    // Start alarm when outcome == 1 and isAlarmPlaying is false
-//    LaunchedEffect(isAlarmPlaying) {
-//        if (!isAlarmPlaying) {
-//            mediaPlayer = MediaPlayer.create(context, R.raw.alarm_sound).apply {
-//                isLooping = true
-//                start()
-//            }
-//            viewModel.updateAlarm(true) // Update the ViewModel state
-//            //state.isAlarmPlaying = true // Keep alarm playing even if outcome changes
-//        }
-//    }
 
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),
@@ -66,6 +50,8 @@ fun NotificationScreen(viewModel: NotificationViewModel = viewModel()) {
                         "Copied local token!",
                         Toast.LENGTH_LONG
                     ).show()
+
+                    viewModel.registerUser(localToken)
                 }
             }
         ) {
@@ -73,53 +59,6 @@ fun NotificationScreen(viewModel: NotificationViewModel = viewModel()) {
         }
 
         Spacer(modifier = Modifier.height(10.dp))
-
-        TextField(
-            value = userId,
-            onValueChange = { viewModel.updateUserId(it) },
-            label = { Text("Enter User ID") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        TextField(
-            value = token,
-            onValueChange = { viewModel.updateToken(it) },
-            label = { Text("Enter FCM Token") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Button(
-            onClick = { viewModel.registerUser() },
-            enabled = userId.isNotEmpty() && token.isNotEmpty()
-        ) {
-            Text("Register User")
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        TextField(
-            value = message,
-            onValueChange = { viewModel.updateMessage(it) },
-            label = { Text("Enter Message") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Button(
-            onClick = { viewModel.sendMessage() },
-            enabled = message.isNotEmpty() && !isSending
-        ) {
-            Text(if (isSending) "Sending..." else "Send Message")
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Text(text = status, color = MaterialTheme.colorScheme.surface)
 
     }
 }

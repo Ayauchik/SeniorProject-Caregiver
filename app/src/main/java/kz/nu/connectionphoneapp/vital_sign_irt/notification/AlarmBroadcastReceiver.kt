@@ -13,6 +13,7 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
                 putExtra("title", intent.getStringExtra("title"))
                 putExtra("body", intent.getStringExtra("body"))
                 putExtra("anomaly_id", intent.getStringExtra("anomaly_id"))
+                putExtra("alertType", intent.getStringExtra("alertType"))
             }
             context.startActivity(alarmIntent)
             Log.e("ALARM_RECEIVER", "Alarm Activity Launched")

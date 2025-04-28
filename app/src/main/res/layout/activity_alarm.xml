@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="@android:color/black"
+    android:background="@android:color/white"
     android:padding="20dp">
 
     <TextView
@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="🚨 Alert!"
-        android:textColor="@android:color/white"
+        android:textColor="@android:color/black"
         android:textSize="30sp"
         android:textStyle="bold"
         android:textAlignment="center" />
@@ -22,20 +22,60 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="An anomaly has been detected!"
-        android:textColor="@android:color/white"
+        android:textColor="@android:color/black"
         android:textSize="24sp"
         android:layout_marginTop="10dp"
         android:textAlignment="center"
         android:gravity="center"
         android:textIsSelectable="true" />
 
-    <Button
-        android:id="@+id/dismissButton"
-        android:layout_width="165dp"
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/ecgComposeView"
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        />
+
+    <!-- Horizontal LinearLayout for Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:background="@android:color/holo_red_dark"
-        android:text="Dismiss Alarm"
-        android:textColor="@android:color/white"
-        android:textSize="18sp" />
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="20dp">
+
+        <Button
+            android:id="@+id/anomalyButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="@android:color/holo_red_dark"
+            android:text="Anomaly"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/notAnomalyButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:backgroundTint="@android:color/holo_green_dark"
+            android:text="Not Anomaly"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/watchCameraButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="Watch Cameras"
+            android:textSize="16sp" />
+        <!-- Adjust backgroundTint if needed -->
+
+    </LinearLayout>
+
 </LinearLayout>

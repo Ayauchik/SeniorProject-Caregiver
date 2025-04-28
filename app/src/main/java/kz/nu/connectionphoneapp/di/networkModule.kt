@@ -3,6 +3,7 @@ package kz.nu.connectionphoneapp.di
 import kz.nu.connectionphoneapp.vital_sign_irt.data.network.FeedbackApi
 import kz.nu.connectionphoneapp.vital_sign_irt.data.network.GlobalAPI
 import kz.nu.connectionphoneapp.vital_sign_irt.data.network.NotificationAPI
+import kz.nu.connectionphoneapp.vital_sign_irt.data.network.SimulationAPI
 import kz.nu.connectionphoneapp.vital_sign_irt.webrtc.WebRtcApi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -26,18 +27,18 @@ val networkModule = module {
             .build()
     }
 
-    single(named("globalRetrofit")) {
-        Retrofit.Builder()
-            .baseUrl(Constants.BASE_URL)
-            .client(get<OkHttpClient>())
-           // .addInterceptor(get<HttpLoggingInterceptor>())
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
-
-    single<GlobalAPI> {
-        get<Retrofit>(named("globalRetrofit")).create(GlobalAPI::class.java)
-    }
+//    single(named("globalRetrofit")) {
+//        Retrofit.Builder()
+//            .baseUrl(Constants.BASE_URL)
+//            .client(get<OkHttpClient>())
+//           // .addInterceptor(get<HttpLoggingInterceptor>())
+//            .addConverterFactory(GsonConverterFactory.create())
+//            .build()
+//    }
+//
+//    single<GlobalAPI> {
+//        get<Retrofit>(named("globalRetrofit")).create(GlobalAPI::class.java)
+//    }
 
 
     single(named("webrtcRetrofit")) {
@@ -54,7 +55,7 @@ val networkModule = module {
 
     single(named("notificationRetrofit")) {
         Retrofit.Builder()
-            .baseUrl(Constants.TEST_URL_NOTIFICATION)
+            .baseUrl(Constants.SIMULATION_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
@@ -63,4 +64,17 @@ val networkModule = module {
     single<FeedbackApi> {
         get<Retrofit>(named("notificationRetrofit")).create(FeedbackApi::class.java)
     }
+
+    single(named("SimulationRetrofit")) {
+        Retrofit.Builder()
+            .baseUrl(Constants.SIMULATION_URL)
+            .client(get<OkHttpClient>())
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    single<SimulationAPI> {
+        get<Retrofit>(named("SimulationRetrofit")).create(SimulationAPI::class.java)
+    }
+
 }

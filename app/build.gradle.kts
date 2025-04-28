@@ -100,4 +100,16 @@ dependencies {
     implementation("io.github.thechance101:chart:1.1.0")
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-viewbinding")
+    implementation("androidx.activity:activity-compose")
+
+// Other (optional, but recommended)
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha10")
+
+
+
+
 }

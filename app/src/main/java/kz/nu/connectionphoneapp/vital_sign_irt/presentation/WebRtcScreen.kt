@@ -1,5 +1,6 @@
 package kz.nu.connectionphoneapp.vital_sign_irt.presentation
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -21,7 +22,8 @@ import org.koin.androidx.compose.koinViewModel
 fun WebRtcScreen(
     viewModel: WebRtcViewModel = koinViewModel(),
     anomalyId: String?,
-    ) {
+    alertType: String?
+) {
     val isConnected by viewModel.isConnected.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
 
@@ -32,7 +34,13 @@ fun WebRtcScreen(
 
 
     val lifecycleOwner = LocalLifecycleOwner.current
-    
+
+    Log.e("WebRtcScreen", "anomalyId: $anomalyId, alertType: $alertType")
+    val showFeedbackButtons = !anomalyId.isNullOrBlank() &&
+            (alertType == "caregiver_alert_user_timeout" || alertType == "caregiver_alert_meta_confirm")
+    Log.e("WebRtcScreen", "showFeedbackButtons: $showFeedbackButtons")
+
+
     // Observe lifecycle for cleanup
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -40,9 +48,9 @@ fun WebRtcScreen(
                 viewModel.disconnect()
             }
         }
-        
+
         lifecycleOwner.lifecycle.addObserver(observer)
-        
+
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
@@ -53,7 +61,7 @@ fun WebRtcScreen(
             viewModel.connect()
         }
     }
-    
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -67,7 +75,7 @@ fun WebRtcScreen(
             style = MaterialTheme.typography.headlineSmall,
             textAlign = TextAlign.Center
         )
-        
+
         // Video View
         Box(
             modifier = Modifier
@@ -85,9 +93,15 @@ fun WebRtcScreen(
                 modifier = Modifier.fillMaxSize(),
                 update = { view ->
                     videoTrack?.addSink(view)
+                    val currentTrack = videoTrack
+                    if (currentTrack != null) {
+                        currentTrack.addSink(view)
+                    } else {
+
+                    }
                 }
             )
-            
+
             // Connection status overlay
             if (isLoading || !isConnected) {
                 Surface(
@@ -118,7 +132,7 @@ fun WebRtcScreen(
                 }
             }
         }
-        
+
         // Error message
         errorMessage?.let {
             Text(
@@ -127,19 +141,22 @@ fun WebRtcScreen(
                 style = MaterialTheme.typography.bodyMedium
             )
         }
-        
+
         // Connection controls
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
         ) {
-            if (!anomalyId.isNullOrBlank()) {
+            if (showFeedbackButtons) {
                 // Show Anomaly / Not Anomaly buttons
                 Button(
                     onClick = {
-                        viewModel.sendFeedback(anomalyId, realLabel = 1) // 1 for Anomaly
+                        viewModel.sendFeedback(anomalyId!!, realLabel = 1)
+//                        if (anomalyId != null) {
+//                            viewModel.sendFeedback(anomalyId, realLabel = 1)
+//                        } // 1 for Anomaly
                     },
-                    enabled = (isConnected && !isFeedbackSent),
+                    enabled = isConnected && !isFeedbackSent,
                     modifier = Modifier.weight(1f)
                 ) {
                     Text("Anomaly")
@@ -147,7 +164,8 @@ fun WebRtcScreen(
 
                 Button(
                     onClick = {
-                        viewModel.sendFeedback(anomalyId, realLabel = 0) // 0 for Not Anomaly
+                        viewModel.sendFeedback(anomalyId!!, realLabel = 0)
+
                     },
                     enabled = (isConnected && !isFeedbackSent),
                     modifier = Modifier.weight(1f)

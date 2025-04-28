@@ -39,11 +39,12 @@ class MainActivity : ComponentActivity() {
         requestNotificationPermission()
         val navigateTo = intent.getStringExtra("navigate_to")
         val anomalyId = intent.getStringExtra("anomaly_id")
+        val alertType = intent.getStringExtra("alertType")
 
 
         setContent {
             ConnectionPhoneAppTheme {
-                AppContent(navigateTo = navigateTo, anomalyId = anomalyId)
+                AppContent(navigateTo = navigateTo, anomalyId = anomalyId, alertType = alertType)
             }
         }
     }

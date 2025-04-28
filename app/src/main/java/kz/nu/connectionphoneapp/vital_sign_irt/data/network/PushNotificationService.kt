@@ -51,7 +51,7 @@ class PushNotificationService() : FirebaseMessagingService() {
         } else if (alertType == "manual_sos") {
             title = "🚨 Manual SOS Alert"
             body = jsonData.optString(
-                "body", "$details\n" +
+                "body", "The patient need immediate help" +
                         "\n" +
                         "Time: $timestamp"
             )
@@ -62,6 +62,8 @@ class PushNotificationService() : FirebaseMessagingService() {
             putExtra("title", title)
             putExtra("body", body)
             putExtra("anomaly_id", anomalyId)
+            Log.e("sending", alertType.toString())
+            putExtra("alertType", alertType)
         }
 
         sendBroadcast(intent)

@@ -24,15 +24,15 @@ import retrofit2.converter.gson.GsonConverterFactory
 class WebRtcViewModel(
     application: Application,
     private val feedbackApi: FeedbackApi
-    ) : ViewModel() {
+) : ViewModel() {
 
-   // private val application = Application()
+    // private val application = Application()
     // Server URL (update with your Raspberry Pi's IP and port)
     private val serverUrl = Constants.TEST_URL_WEBRTC
-    
+
     // WebRTC client
     private val webRtcClient = WebRtcClient(application, serverUrl)
-    
+
     // State flows
     private val _isConnected = MutableStateFlow(false)
     val isConnected: StateFlow<Boolean> = _isConnected
@@ -45,15 +45,15 @@ class WebRtcViewModel(
 
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage
-    
+
     private val _videoTrack = MutableStateFlow<VideoTrack?>(null)
     val videoTrack: StateFlow<VideoTrack?> = _videoTrack
-    
+
     // EGL context for rendering
     val eglContext: EglBase.Context?
         get() = webRtcClient.getEglContext()
 
-    
+
     init {
         // Observe connection state
         viewModelScope.launch {
@@ -64,17 +64,20 @@ class WebRtcViewModel(
                         _isLoading.value = false
                         _errorMessage.value = null
                     }
+
                     ConnectionState.FAILED -> {
                         _isConnected.value = false
                         _isLoading.value = false
                         _errorMessage.value = "Connection failed. Please try again."
                     }
+
                     ConnectionState.DISCONNECTED -> {
                         _isConnected.value = false
                         _errorMessage.value = null
                         _isLoading.value = false
                     }
-                    ConnectionState.CONNECTING ->{
+
+                    ConnectionState.CONNECTING -> {
                         _isLoading.value = true
                         _isConnected.value = false
                         _errorMessage.value = null
@@ -82,26 +85,26 @@ class WebRtcViewModel(
                 }
             }
         }
-        
+
         viewModelScope.launch {
             webRtcClient.remoteVideoTrack.collectLatest { track ->
                 _videoTrack.value = track
             }
         }
     }
-    
+
     // Start WebRTC connection
     fun connect() {
         _errorMessage.value = null
-       // _isLoading.value = true
+        // _isLoading.value = true
         webRtcClient.start()
     }
-    
+
     // Disconnect
     fun disconnect() {
         webRtcClient.stop()
     }
-    
+
     // Clean up resources
     override fun onCleared() {
         super.onCleared()
@@ -109,6 +112,11 @@ class WebRtcViewModel(
     }
 
     fun sendFeedback(anomalyId: String, realLabel: Int) {
+        if (anomalyId.isBlank()) {
+            Log.e("WebRtcVM", "Cannot send feedback without an anomaly ID.")
+            _errorMessage.value = "Cannot send feedback: Missing Anomaly ID."
+            return // Don't proceed
+        }
         viewModelScope.launch {
             try {
                 val response = feedbackApi.sendFeedback(
